@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Load external libraries first -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="module">
+        import promptpayQr from 'https://cdn.jsdelivr.net/npm/promptpay-qr@0.5.0/+esm'
+        window.promptpayQr = promptpayQr
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>ตะกร้าสินค้า</h1>
+        <div id="cart-items"></div>
+        <p>ยอดรวม: <span id="total-price">0</span> บาท</p>
+        <button id="pay-btn">ชำระเงิน</button>
+        <div id="qr-container" style="display: none;">
+            <h2>ชำระเงินด้วย QR พร้อมเพย์</h2>
+            <div id="qrcode">
+                <img id="promptpay-qr-img" src="/placeholder.svg" alt="PromptPay QR Code">
+            </div>
+            <button id="alert-save">ขั้นตอนการชำระเงิน</button>
+        </div>
+        <br>
+        <button id="send-line">ส่งข้อความผ่าน LINE</button>
+        <br>
+        <a href="index.html" class="button">กลับไปหน้าร้านค้า</a>
+    </div>
+    <!-- Load our script after all external libraries -->
+    <script src="cart.js"></script>
+</body>
+</html>
+

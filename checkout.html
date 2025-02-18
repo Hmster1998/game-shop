@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชำระเงิน</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://fastly.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+        import promptpayQr from 'https://fastly.jsdelivr.net/npm/promptpay-qr@0.5.0/+esm'
+        window.promptpayQr = promptpayQr
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>ชำระเงินด้วย QR พร้อมเพย์</h1>
+        <div id="qrcode">
+            <img id="promptpay-qr-img" src="/placeholder.svg" alt="PromptPay QR Code">
+        </div>
+        <p id="total"></p>
+        <input type="number" id="amount" placeholder="กรอกจำนวนเงิน">
+        <button id="alert-save">ขั้นตอนการชำระเงิน</button>
+        <a href="index.html" class="button">กลับไปหน้าร้านค้า</a>
+    </div>
+    <script>
+        $(document).ready(() => {
+            let phoneNumber = "004999176240769"; // หมายเลขพร้อมเพย์ (ใช้หมายเลขจริงของคุณ)
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            $('#amount').val(total);
+            updateQRCode(total);
+            $('#total').text(`ยอดรวม: ${total} บาท`);
+
+            $('#amount').on('input', () => {
+                let amount = $('#amount').val() ? Number($('#amount').val()) : 0;
+                updateQRCode(amount);
+            });
+
+            $('#alert-save').on('click', () => {
+                Swal.fire({
+                    title: "📢 ขั้นตอนทำรายการ",
+                    html: `
+                        <ul style="text-align: left; font-size: 14px; line-height: 2;">
+                           <li> <b>กรอกจำนวนเงินที่ต้องการชำระ</b></li>
+                           <li> <b>แคปภาพหน้าจอเพื่อบันทึก QR Code ชำระเงิน</b></li>
+                           <li> <b>ตรวจสอบความถูกต้องก่อนกดยืนยัน</b></li>
+                           <li> <b>ชำระเงินแล้ว แจ้งสลิปที่ไลน์ทุกครั้ง! <a href="https://page.line.me/jpo3470r" target="_blank">Click</a></b></li>
+                           <li> <b>ขอบคุณที่ชำระค่าบริการของเราค่ะ</b></li>
+                        </ul>
+                    `,
+                    icon: "info",
+                    showConfirmButton: true,
+                    confirmButtonColor: "#d33",
+                    confirmButtonText: "รับทราบ",
+                    background: "black",
+                    color: "white",
+                    timer: 80000,
+                    timerProgressBar: true,
+                    showClass: {
+                        popup: "animate__animated animate__zoomIn"
+                    },
+                    hideClass: {
+                        popup: "animate__animated animate__zoomOut"
+                    }
+                });
+            });
+
+            function updateQRCode(amount) {
+                let qrData = promptpayQr(phoneNumber, {amount: amount});
+                let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${qrData}&size=500x500&margin=10`;
+                $('#promptpay-qr-img').attr('src', qrUrl);
+            }
+        });
+    </script>
+</body>
+</html>
+
